@@ -9,7 +9,6 @@ app.get('/', (req, res) => {
     res.send('Esto es express');
 })
 
-app.use("/api/v1", router)
 
 
 module.exports = app;

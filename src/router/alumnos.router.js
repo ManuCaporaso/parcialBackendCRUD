@@ -2,8 +2,13 @@ const router = require("express").Router();
 
 const Alumnos = require("../model/alumnos.model")
 
-router.get("/alumnos", (req, res) => {
-    res.send("Yo soy una ruta")
+router.get("/alumnos", async (req, res) => {
+    const Alumnos = await Alumnos.findAll()
+    res.status(200).json({
+        ok: true,
+        status: 200,
+        body: Alumnos
+    })
 });
 
 router.get("/alumno", (req, res) => {
