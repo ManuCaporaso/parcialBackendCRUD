@@ -1,17 +1,16 @@
-const { Sequelize, DataTypes,} = require("sequelize");
+const { Sequelize, DataTypes } = require("sequelize");
 
 const sequelize = new Sequelize('prueba_sequelize', 'root', 'root', {
     host: 'localhost',
     dialect: 'mariadb',
-    port: 3307
+    port: 3306
 });
 
-
-const alumno = sequelize.define('alumno', {
+const Alumnos = sequelize.define('Alumno', {
     id: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
+        primaryKey: true
     },
     apellido: {
         type: DataTypes.STRING,
@@ -23,15 +22,29 @@ const alumno = sequelize.define('alumno', {
     },
     activo: {
         type: DataTypes.BOOLEAN,
-        defaultValue: true
-    },
+        allowNull: false
+    }
 }, {
-    tableName: 'alumnos', // Nombre de la tabla en la base de datos
-    timestamps: false     // Deshabilita los timestamps (createdAt y updatedAt)
+    tableName: 'alumnos',
+    timestamps: false
 });
 
 
-module.exports = alumno;
+(async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Connection has been established successfully.');
+        
+        // Esto creará la tabla si no existe (y no hará nada si ya existe)
+        await Alumnos.sync();
+        console.log('Table "Alumnos" synchronized successfully.');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+})();
+
+module.exports = Alumnos;
+
 
 
 

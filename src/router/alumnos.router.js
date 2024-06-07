@@ -1,54 +1,148 @@
-const router = require("express").Router();
+const express = require('express');
+const router = express.Router();
+const Alumnos = require('../model/alumnos.model');
 
-const Alumnos = require("../model/alumnos.model")
-
-router.get("/alumnos", async (req, res) => {
-    const Alumnos = await Alumnos.findAll()
-    res.status(200).json({
-        ok: true,
-        status: 200,
-        body: Alumnos
-    })
+// Ruta para obtener todos los alumnos
+router.get('/alumnos', async (req, res) => {
+    try {
+        const alumnos = await Alumnos.findAll();
+        res.status(200).json({
+            ok: true,
+            status: 200,
+            body: alumnos
+        });
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            status: 500,
+            message: 'Error obteniendo los alumnos',
+            error: error.message
+        });
+    }
 });
 
-router.get("/alumno", (req, res) => {
-    res.send("Yo soy una ruta")
+// Ruta para obtener un alumno por ID
+router.get('/alumnos/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const alumno = await Alumnos.findByPk(id);
+        if (!alumno) {
+            return res.status(404).json({
+                ok: false,
+                status: 404,
+                message: 'Alumno no encontrado'
+            });
+        }
+        res.status(200).json({
+            ok: true,
+            status: 200,
+            body: alumno
+        });
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            status: 500,
+            message: 'Error obteniendo el alumno',
+            error: error.message
+        });
+    }
 });
 
-router.post("/alumnos/crear", async (req, res) => {
-    const { nombre, apellido, activo } = req.body;
+// Ruta para crear un alumno
+router.post('/alumnos/crear', async (req, res) => {
+    const { apellido, nombre, activo } = req.body;
 
     try {
-        await Alumnos.sync();
         const createAlumnos = await Alumnos.create({
-            nombre,
             apellido,
+            nombre,
             activo
         });
 
         res.status(201).json({
             ok: true,
             status: 201,
-            message: "Alumno Creado",
+            message: 'Alumno Creado Correctamente',
             data: createAlumnos
         });
     } catch (error) {
         res.status(500).json({
             ok: false,
             status: 500,
-            message: "Error creando el alumno",
+            message: 'Error creando el alumno',
             error: error.message
         });
     }
 });
 
-router.put("/alumnos/editar", (req, res) => {
-    res.send("Yo soy una ruta")
+// Ruta para actualizar un alumno
+router.put('/alumnos/editar/:id', async (req, res) => {
+    const { id } = req.params;
+    const { apellido, nombre, activo } = req.body;
+
+    try {
+        const alumno = await Alumnos.findByPk(id);
+
+        if (!alumno) {
+            return res.status(404).json({
+                ok: false,
+                status: 404,
+                message: 'Alumno no encontrado'
+            });
+        }
+
+        alumno.apellido = apellido || alumno.apellido;
+        alumno.nombre = nombre || alumno.nombre;
+        alumno.activo = activo !== undefined ? activo : alumno.activo;
+
+        await alumno.save();
+
+        res.status(200).json({
+            ok: true,
+            status: 200,
+            message: 'Alumno Actualizado Correctamente',
+            data: alumno
+        });
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            status: 500,
+            message: 'Error actualizando el alumno',
+            error: error.message
+        });
+    }
 });
 
-router.delete("/alumnos/borrar", (req, res) => {
-    res.send("Yo soy una ruta")
-});
+// Ruta para eliminar un alumno
+router.delete('/alumnos/borrar/:id', async (req, res) => {
+    const { id } = req.params;
 
+    try {
+        const alumno = await Alumnos.findByPk(id);
+
+        if (!alumno) {
+            return res.status(404).json({
+                ok: false,
+                status: 404,
+                message: 'Alumno no encontrado'
+            });
+        }
+
+        await alumno.destroy();
+
+        res.status(200).json({
+            ok: true,
+            status: 200,
+            message: 'Alumno Eliminado Correctamente'
+        });
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            status: 500,
+            message: 'Error eliminando el alumno',
+            error: error.message
+        });
+    }
+});
 
 module.exports = router;
