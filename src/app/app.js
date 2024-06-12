@@ -1,21 +1,23 @@
-const express = require ('express')
-const morgan = require("morgan")
-const router = require("../router/alumnos.router")
+const express = require ('express');
+const morgan = require("morgan");
+const cors = require('cors');
+
+const router = require("../router/productos.router");
 
 const app = express()
-// Middleware para logging
-app.use(morgan('dev'));
 
-// Middleware para procesar JSON
+// Middlewares
+app.use(morgan('dev'));
+app.use(cors());
 app.use(express.json());
 
 // Ruta principal
 app.get('/', (req, res) => {
-    res.send('Esto es express');
+    res.send('Esto es express y funciona');
 });
 
-// Usar el router de alumnos para las rutas /api/v1/ alumnos
-app.use('/api/v1', router);
+
+app.use('/api/', router);
 
 
 

@@ -1,33 +1,39 @@
 const { Sequelize, DataTypes } = require("sequelize");
 
-const sequelize = new Sequelize('prueba_sequelize', 'root', 'root', {
+const sequelize = new Sequelize('parcialBackend', 'root', 'root', {
     host: 'localhost',
     dialect: 'mariadb',
-    port: 3307
+    port: 3306
 });
 
-const Alumnos = sequelize.define('Alumno', {
+const Producto = sequelize.define('Producto', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true
-    },
-    apellido: {
-        type: DataTypes.STRING,
-        allowNull: false
+        primaryKey: true,
     },
     nombre: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
     },
-    activo: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false
-    }
+    precio: {
+        type: DataTypes.DECIMAL,
+        allowNull: false,
+    },
+    cantidad: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    categoria: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
 }, {
-    tableName: 'alumnos',
-    timestamps: false
+    tableName: 'productos',
+    timestamps: false,
 });
+
+module.exports = Producto;
 
 
 (async () => {
@@ -36,8 +42,8 @@ const Alumnos = sequelize.define('Alumno', {
         console.log('Connection has been established successfully.');
         
         // Esto creará la tabla si no existe (y no hará nada si ya existe)
-        await Alumnos.sync();
-        console.log('Table "Alumnos" synchronized successfully.');
+        await Producto.sync();
+        console.log('Table "Productos" sincronizada correctamente.');
     } catch (error) {
         console.error('Unable to connect to the database:', error);
     }
@@ -45,7 +51,7 @@ const Alumnos = sequelize.define('Alumno', {
 
 
 
-module.exports = Alumnos;
+module.exports = Producto;
 
 
 
