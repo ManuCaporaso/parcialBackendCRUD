@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Alumnos = require('../model/alumnos.model');
+const { Op } = require('sequelize');
 
 // Ruta para obtener todos los alumnos
 router.get('/alumnos', async (req, res) => {
@@ -48,8 +49,43 @@ router.get('/alumnos/:id', async (req, res) => {
     }
 });
 
+// Nueva ruta para buscar alumnos por nombre
+router.get('/alumnos/nombre/:nombre', async (req, res) => {
+    const { nombre } = req.params;
+    try {
+        const alumnos = await Alumnos.findAll({
+            where: {
+                nombre: {
+                    [Op.like]: `%${nombre}%`
+                }
+            }
+        });
+        if (alumnos.length === 0) {
+            return res.status(404).json({
+                ok: false,
+                status: 404,
+                message: 'No se encontraron alumnos con ese nombre'
+            });
+        }
+        res.status(200).json({
+            ok: true,
+            status: 200,
+            data: alumnos
+        });
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            status: 500,
+            message: 'Error buscando alumnos por nombre',
+            error: error.message
+        });
+    }
+});
+
+
+
 // Ruta para crear un alumno
-router.post('/alumnos/crear', async (req, res) => {
+router.post('/alumnos', async (req, res) => {
     const { apellido, nombre, activo } = req.body;
 
     try {
@@ -76,7 +112,7 @@ router.post('/alumnos/crear', async (req, res) => {
 });
 
 // Ruta para actualizar un alumno
-router.put('/alumnos/editar/:id', async (req, res) => {
+router.put('/alumnos/:id', async (req, res) => {
     const { id } = req.params;
     const { apellido, nombre, activo } = req.body;
 
@@ -114,7 +150,7 @@ router.put('/alumnos/editar/:id', async (req, res) => {
 });
 
 // Ruta para eliminar un alumno
-router.delete('/alumnos/borrar/:id', async (req, res) => {
+router.delete('/alumnos/:id', async (req, res) => {
     const { id } = req.params;
 
     try {

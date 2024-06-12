@@ -3,7 +3,7 @@ const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = new Sequelize('prueba_sequelize', 'root', 'root', {
     host: 'localhost',
     dialect: 'mariadb',
-    port: 3306
+    port: 3307
 });
 
 const Alumnos = sequelize.define('Alumno', {
@@ -42,6 +42,8 @@ const Alumnos = sequelize.define('Alumno', {
         console.error('Unable to connect to the database:', error);
     }
 })();
+
+
 
 module.exports = Alumnos;
 
