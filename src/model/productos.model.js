@@ -39,13 +39,13 @@ module.exports = Producto;
 (async () => {
     try {
         await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
+        console.log('la conexion ha sido establecida.');
         
         // Esto creará la tabla si no existe (y no hará nada si ya existe)
         await Producto.sync();
-        console.log('Table "Productos" sincronizada correctamente.');
+        console.log('Tabla "Productos" sincronizada correctamente.');
     } catch (error) {
-        console.error('Unable to connect to the database:', error);
+        console.error('No ha podido conectarse :', error);
     }
 })();
 
